@@ -1,8 +1,14 @@
+import 'package:dynamic_ui/root_card_dao.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dynamic_card.dart';
 
-void main() {
+Future<void> main() async {
+  await Supabase.initialize(
+      url: const String.fromEnvironment("SUPABASE_URL"),
+      anonKey: const String.fromEnvironment("SUPABASE_KEY"));
+
   runApp(const App());
 }
 
@@ -21,15 +27,15 @@ class App extends StatelessWidget {
 }
 
 class State extends ChangeNotifier {
-  var root = DynamicCardBuilder()
-      .setCards([
-        DynamicCardBuilder().setContent("1").setPadding(60).build(),
-        DynamicCardBuilder().setContent("2").build(),
-      ])
-      .setPadding(2)
-      .build();
+  var root =
+      DynamicCardBuilder().setContent("Loading...").setPadding(2).build();
 
-  getNext() {}
+  getNext() {
+    RootCardDao().getSingleDynamicCard().then((dynamicCard) {
+      root = dynamicCard;
+      notifyListeners();
+    });
+  }
 }
 
 class HomePage extends StatelessWidget {
@@ -38,6 +44,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = context.watch<State>();
+
+    state.getNext();
 
     return state.root.build();
   }

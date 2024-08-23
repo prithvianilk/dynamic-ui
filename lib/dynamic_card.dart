@@ -34,6 +34,37 @@ class DynamicCard {
         );
     }
   }
+
+  factory DynamicCard.fromJson(dynamic json) {
+    print(json);
+    return switch (json) {
+      {
+        'content': String content,
+        'ordering': String? ordering,
+        'padding': double? padding,
+      } =>
+        DynamicCardBuilder()
+            .setContent(content)
+            .setOrdering(Ordering.from(ordering))
+            .setPadding(padding)
+            .build(),
+      {'content': String content} =>
+        DynamicCardBuilder().setContent(content).build(),
+      {
+        'cards': List<dynamic> cards,
+        'ordering': String? ordering,
+        'padding': double? padding,
+      } =>
+        DynamicCardBuilder()
+            .setCards(
+              cards.map((card) => DynamicCard.fromJson(card)).toList(),
+            )
+            .setOrdering(Ordering.from(ordering))
+            .setPadding(padding)
+            .build(),
+      _ => throw const FormatException('Failed to load dynamic card.'),
+    };
+  }
 }
 
 class DynamicCardBuilder {
@@ -55,13 +86,13 @@ class DynamicCardBuilder {
     return this;
   }
 
-  DynamicCardBuilder setOrdering(Ordering ordering) {
-    _ordering = ordering;
+  DynamicCardBuilder setOrdering(Ordering? ordering) {
+    _ordering = ordering ?? Ordering.column;
     return this;
   }
 
-  DynamicCardBuilder setPadding(double padding) {
-    _padding = padding;
+  DynamicCardBuilder setPadding(double? padding) {
+    _padding = padding ?? 0;
     return this;
   }
 
@@ -80,4 +111,19 @@ class DynamicCardBuilder {
   }
 }
 
-enum Ordering { row, column }
+enum Ordering {
+  row,
+  column;
+
+  factory Ordering.from(String? value) {
+    var resolvedValue = value ?? "column";
+    switch (resolvedValue) {
+      case "row":
+        return Ordering.row;
+      case "column":
+        return Ordering.column;
+      default:
+        throw ArgumentError("Illegal Ordering value");
+    }
+  }
+}
