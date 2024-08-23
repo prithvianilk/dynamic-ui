@@ -1,5 +1,37 @@
 import 'package:flutter/cupertino.dart';
 
+class DynamicCardPadding {
+  final double _top, _bottom, _left, _right;
+
+  DynamicCardPadding(this._top, this._bottom, this._left, this._right);
+
+  Padding build(Widget child) {
+    print("print");
+    print(child);
+    return Padding(
+      padding: EdgeInsets.only(
+          top: _top, bottom: _bottom, left: _left, right: _right),
+      child: child,
+    );
+  }
+
+  factory DynamicCardPadding.fromJson(dynamic json) {
+    print("DynamicCardPadding:");
+    print(json);
+
+    if (json == null) {
+      return DynamicCardPadding(0, 0, 0, 0);
+    }
+
+    return DynamicCardPadding(
+      json['top'] as double? ?? 0,
+      json['bottom'] as double? ?? 0,
+      json['left'] as double? ?? 0,
+      json['right'] as double? ?? 0,
+    );
+  }
+}
+
 class DynamicCard {
   final String? _content;
 
@@ -7,66 +39,37 @@ class DynamicCard {
 
   final Ordering _ordering;
 
-  final double _padding;
+  final DynamicCardPadding _padding;
 
   DynamicCard(this._content, this._cards, this._ordering, this._padding);
 
-  // TODO: Refactor. Find more expressive patterns...
   Widget build() {
     if (_content != null) {
-      return Padding(
-        padding: EdgeInsets.all(_padding),
-        child: Text(_content!),
-      );
+      return _padding.build(Text(_content!));
     }
 
     var renderedCards = _cards!.map((card) => card.build()).toList();
 
     switch (_ordering) {
       case Ordering.row:
-        return Padding(
-          padding: EdgeInsets.all(_padding),
-          child: Row(children: renderedCards),
-        );
+        return _padding.build(Row(children: renderedCards));
       case Ordering.column:
-        return Padding(
-          padding: EdgeInsets.all(_padding),
-          child: Column(children: renderedCards),
-        );
+        return _padding.build(Column(children: renderedCards));
     }
   }
 
   factory DynamicCard.fromJson(dynamic json) {
     print(json);
 
-    // TODO: Find a good deserialization lib
-    return switch (json) {
-      {
-        'content': String content,
-        'ordering': String? ordering,
-        'padding': double? padding,
-      } =>
-        DynamicCardBuilder()
-            .setContent(content)
-            .setOrdering(Ordering.from(ordering))
-            .setPadding(padding)
-            .build(),
-      {'content': String content} =>
-        DynamicCardBuilder().setContent(content).build(),
-      {
-        'cards': List<dynamic> cards,
-        'ordering': String? ordering,
-        'padding': double? padding,
-      } =>
-        DynamicCardBuilder()
-            .setCards(
-              cards.map((card) => DynamicCard.fromJson(card)).toList(),
-            )
-            .setOrdering(Ordering.from(ordering))
-            .setPadding(padding)
-            .build(),
-      _ => throw const FormatException('Failed to load dynamic card.'),
-    };
+    var cards = json['cards'] as List<dynamic>?;
+    var resolvedCards =
+        cards?.map((card) => DynamicCard.fromJson(card)).toList();
+
+    return DynamicCard(
+        json['content'] as String?,
+        resolvedCards,
+        Ordering.from(json['ordering']),
+        DynamicCardPadding.fromJson(json['padding']));
   }
 }
 
@@ -77,7 +80,7 @@ class DynamicCardBuilder {
 
   Ordering? _ordering;
 
-  double? _padding;
+  Padding? _padding;
 
   DynamicCardBuilder setContent(String content) {
     _content = content;
@@ -94,8 +97,8 @@ class DynamicCardBuilder {
     return this;
   }
 
-  DynamicCardBuilder setPadding(double? padding) {
-    _padding = padding ?? 0;
+  DynamicCardBuilder setPadding(dynamic padding) {
+    _padding = padding;
     return this;
   }
 
@@ -105,19 +108,15 @@ class DynamicCardBuilder {
       _ => _ordering!,
     };
 
-    double finalPadding = switch (_padding) {
-      null => 0,
-      _ => _padding!,
-    };
-
     print("Printing DynamicCard on build");
     print(_content);
     print(_cards);
     print(finalOrdering);
-    print(finalPadding);
+    print(_padding);
     print("\n");
 
-    return DynamicCard(_content, _cards, finalOrdering, finalPadding);
+    return DynamicCard(
+        _content, _cards, finalOrdering, DynamicCardPadding.fromJson(_padding));
   }
 }
 

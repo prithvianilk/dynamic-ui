@@ -17,35 +17,30 @@
     {
       "cards": [
         {
-          "content": "",
-          "ordering": "column",
-          "padding": 250
-        },
-        {
           "content": "first card",
           "ordering": "column",
-          "padding": 20
-        },
-        {
-          "content": "",
-          "ordering": "column",
-          "padding": 100
+          "padding": {
+            "left": 550,
+            "right": 200
+          }
         },
         {
           "content": "second card?"
         }
       ],
-      "ordering": "row",
-      "padding": 0
+      "ordering": "row"
     },
     {
       "content": "another one (dj khaled)",
-      "padding": 150,
-      "ordering": "column"
+      "padding": {
+        "top": 50
+      }
     }
   ],
   "ordering": "column",
-  "padding": 0
+  "padding": {
+    "top": 300
+  }
 }
 ```
 

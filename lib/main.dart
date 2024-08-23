@@ -27,8 +27,7 @@ class App extends StatelessWidget {
 }
 
 class State extends ChangeNotifier {
-  var root =
-      DynamicCardBuilder().setContent("Loading...").setPadding(2).build();
+  var root = DynamicCardBuilder().setContent("Loading...").build();
 
   getNext() {
     RootCardDao().getSingleDynamicCard().then((dynamicCard) {
@@ -45,6 +44,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = context.watch<State>();
 
+    // TODO: Fix the bullshit re-renders :)
     state.getNext();
 
     return state.root.build();
