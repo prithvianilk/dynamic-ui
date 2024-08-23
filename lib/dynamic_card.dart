@@ -11,6 +11,7 @@ class DynamicCard {
 
   DynamicCard(this._content, this._cards, this._ordering, this._padding);
 
+  // TODO: Refactor. Find more expressive patterns...
   Widget build() {
     if (_content != null) {
       return Padding(
@@ -37,6 +38,8 @@ class DynamicCard {
 
   factory DynamicCard.fromJson(dynamic json) {
     print(json);
+
+    // TODO: Find a good deserialization lib
     return switch (json) {
       {
         'content': String content,
@@ -107,6 +110,13 @@ class DynamicCardBuilder {
       _ => _padding!,
     };
 
+    print("Printing DynamicCard on build");
+    print(_content);
+    print(_cards);
+    print(finalOrdering);
+    print(finalPadding);
+    print("\n");
+
     return DynamicCard(_content, _cards, finalOrdering, finalPadding);
   }
 }
@@ -116,14 +126,7 @@ enum Ordering {
   column;
 
   factory Ordering.from(String? value) {
-    var resolvedValue = value ?? "column";
-    switch (resolvedValue) {
-      case "row":
-        return Ordering.row;
-      case "column":
-        return Ordering.column;
-      default:
-        throw ArgumentError("Illegal Ordering value");
-    }
+    value ??= "column";
+    return Ordering.values.firstWhere((enumValue) => enumValue.name == value);
   }
 }
