@@ -1,72 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dynamic_card.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => State(),
       child: const MaterialApp(
-        home: MyHomePage(),
+        home: HomePage(),
       ),
     );
   }
 }
 
-enum ChangeType { inc, dec }
+class State extends ChangeNotifier {
+  var root = DynamicCardBuilder()
+      .setCards([
+        DynamicCardBuilder().setContent("1").setPadding(60).build(),
+        DynamicCardBuilder().setContent("2").build(),
+      ])
+      .setPadding(2)
+      .build();
 
-class MyAppState extends ChangeNotifier {
-  var x = 1;
-
-  getNext(ChangeType type) {
-    switch (type) {
-      case ChangeType.inc:
-        ++x;
-      case ChangeType.dec:
-        if (x > 0) {
-          --x;
-        }
-    }
-
-    notifyListeners();
-  }
+  getNext() {}
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    var state = context.watch<State>();
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50, bottom: 30),
-            child: Text(appState.x.toString()),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () => appState.getNext(ChangeType.inc),
-                child: const Text('+'),
-              ),
-              ElevatedButton(
-                onPressed: () => appState.getNext(ChangeType.dec),
-                child: const Text('-'),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+    return state.root.build();
   }
 }
