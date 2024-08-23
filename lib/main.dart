@@ -27,9 +27,11 @@ class MyAppState extends ChangeNotifier {
   getNext(ChangeType type) {
     switch (type) {
       case ChangeType.inc:
-        x++;
+        ++x;
       case ChangeType.dec:
-        x--;
+        if (x > 0) {
+          --x;
+        }
     }
 
     notifyListeners();
@@ -46,7 +48,10 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Text(appState.x.toString()),
+          Padding(
+            padding: const EdgeInsets.only(top: 50, bottom: 30),
+            child: Text(appState.x.toString()),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
