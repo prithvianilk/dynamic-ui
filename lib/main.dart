@@ -28,7 +28,7 @@ class App extends StatelessWidget {
 }
 
 class State extends ChangeNotifier {
-  var root = DynamicCardBuilder().setContent("Loading...").build();
+  var root = DynamicCard.loadingCard();
 
   State() {
     RootCardDao().getSingleDynamicCard().then((dynamicCard) {

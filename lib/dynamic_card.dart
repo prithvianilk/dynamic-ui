@@ -60,6 +60,10 @@ class DynamicCard {
     }
   }
 
+  factory DynamicCard.loadingCard() {
+    return DynamicCardBuilder().setContent("Loading...").build();
+  }
+
   factory DynamicCard.fromJson(dynamic json) {
     log(json);
 
