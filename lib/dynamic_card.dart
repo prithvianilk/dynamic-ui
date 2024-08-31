@@ -58,11 +58,7 @@ class DynamicCard {
     }
 
     var renderedCards = _cards!.map((card) => card.build()).toList();
-
-    var alignment = switch (_alignment) {
-      DynamicCardAlignment.start => MainAxisAlignment.start,
-      DynamicCardAlignment.center => MainAxisAlignment.center,
-    };
+    var alignment = _alignment.toMainAxisAlignment();
 
     switch (_ordering) {
       case DynamicCardOrdering.row:
@@ -109,11 +105,18 @@ enum DynamicCardOrdering {
 
 enum DynamicCardAlignment {
   start,
-  center;
+  center,
+  spaceEvenly,
+  spaceBetween;
 
   factory DynamicCardAlignment.from(String? value) {
     value ??= "start";
     return DynamicCardAlignment.values
         .firstWhere((enumValue) => enumValue.name == value);
+  }
+
+  MainAxisAlignment toMainAxisAlignment() {
+    return MainAxisAlignment.values
+        .firstWhere((mainAxisAlignment) => mainAxisAlignment.name == name);
   }
 }
