@@ -32,7 +32,7 @@ class State extends ChangeNotifier {
 
   State() {
     RootCardDao().getSingleDynamicCard().then((dynamicCard) {
-      log("fetching card");
+      log("fetching card:");
       root = dynamicCard;
       notifyListeners();
     });
@@ -45,6 +45,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = context.watch<State>();
-    return state.root.build();
+
+    return Material(
+      child: state.root.build(),
+    );
   }
 }

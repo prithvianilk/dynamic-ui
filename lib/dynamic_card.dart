@@ -91,7 +91,7 @@ class DynamicCardPadding {
   DynamicCardPadding(this._top, this._bottom, this._left, this._right);
 
   Padding build(Widget child) {
-    log("logging card padding");
+    log("logging card padding:");
     log(child);
     return Padding(
       padding: EdgeInsets.only(
