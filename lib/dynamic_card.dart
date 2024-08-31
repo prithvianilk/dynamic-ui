@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 
+import 'logger.dart';
+
 class DynamicCardPadding {
   final double _top, _bottom, _left, _right;
 
   DynamicCardPadding(this._top, this._bottom, this._left, this._right);
 
   Padding build(Widget child) {
-    print("print");
-    print(child);
+    log("logging card padding");
+    log(child);
     return Padding(
       padding: EdgeInsets.only(
           top: _top, bottom: _bottom, left: _left, right: _right),
@@ -16,8 +18,8 @@ class DynamicCardPadding {
   }
 
   factory DynamicCardPadding.fromJson(dynamic json) {
-    print("DynamicCardPadding:");
-    print(json);
+    log("logging dynamic card padding json:");
+    log(json);
 
     if (json == null) {
       return DynamicCardPadding(0, 0, 0, 0);
@@ -59,7 +61,7 @@ class DynamicCard {
   }
 
   factory DynamicCard.fromJson(dynamic json) {
-    print(json);
+    log(json);
 
     var cards = json['cards'] as List<dynamic>?;
     var resolvedCards =
@@ -108,12 +110,12 @@ class DynamicCardBuilder {
       _ => _ordering!,
     };
 
-    print("Printing DynamicCard on build");
-    print(_content);
-    print(_cards);
-    print(finalOrdering);
-    print(_padding);
-    print("\n");
+    log("logging DynamicCard on build");
+    log(_content);
+    log(_cards);
+    log(finalOrdering);
+    log(_padding);
+    log("\n");
 
     return DynamicCard(
         _content, _cards, finalOrdering, DynamicCardPadding.fromJson(_padding));

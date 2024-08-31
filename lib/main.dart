@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dynamic_card.dart';
+import 'logger.dart';
 
 Future<void> main() async {
   await Supabase.initialize(
@@ -29,8 +30,9 @@ class App extends StatelessWidget {
 class State extends ChangeNotifier {
   var root = DynamicCardBuilder().setContent("Loading...").build();
 
-  getNext() {
+  State() {
     RootCardDao().getSingleDynamicCard().then((dynamicCard) {
+      log("fetching card");
       root = dynamicCard;
       notifyListeners();
     });
@@ -43,10 +45,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = context.watch<State>();
-
-    // TODO: Fix the bullshit re-renders :)
-    state.getNext();
-
     return state.root.build();
   }
 }
