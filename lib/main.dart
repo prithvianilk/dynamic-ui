@@ -31,7 +31,7 @@ class State extends ChangeNotifier {
   var root = DynamicCard.loadingCard();
 
   State() {
-    RootCardDao().getSingleDynamicCard().then((dynamicCard) {
+    RootCardDao().getRootDynamicCardDefinition("home_farm").then((dynamicCard) {
       log("fetching card:");
       root = dynamicCard;
       notifyListeners();
