@@ -17,12 +17,16 @@ class DynamicCardPadding {
     );
   }
 
+  factory DynamicCardPadding.none() {
+    return DynamicCardPadding(0, 0, 0, 0);
+  }
+
   factory DynamicCardPadding.fromJson(dynamic json) {
     log("logging dynamic card padding json:");
     log(json);
 
     if (json == null) {
-      return DynamicCardPadding(0, 0, 0, 0);
+      return DynamicCardPadding.none();
     }
 
     return DynamicCardPadding(
@@ -39,29 +43,41 @@ class DynamicCard {
 
   final List<DynamicCard>? _cards;
 
-  final Ordering _ordering;
+  final DynamicCardOrdering _ordering;
+
+  final DynamicCardAlignment _alignment;
 
   final DynamicCardPadding _padding;
 
-  DynamicCard(this._content, this._cards, this._ordering, this._padding);
+  DynamicCard(this._content, this._cards, this._ordering, this._alignment,
+      this._padding);
 
   Widget build() {
     if (_content != null) {
-      return _padding.build(Text(_content!));
+      return _padding.build(Text(_content));
     }
 
     var renderedCards = _cards!.map((card) => card.build()).toList();
 
+    var alignment = switch (_alignment) {
+      DynamicCardAlignment.start => MainAxisAlignment.start,
+      DynamicCardAlignment.center => MainAxisAlignment.center,
+    };
+
     switch (_ordering) {
-      case Ordering.row:
-        return _padding.build(Row(children: renderedCards));
-      case Ordering.column:
-        return _padding.build(Column(children: renderedCards));
+      case DynamicCardOrdering.row:
+        return _padding
+            .build(Row(mainAxisAlignment: alignment, children: renderedCards));
+
+      case DynamicCardOrdering.column:
+        return _padding.build(
+            Column(mainAxisAlignment: alignment, children: renderedCards));
     }
   }
 
   factory DynamicCard.loadingCard() {
-    return DynamicCardBuilder().setContent("Loading...").build();
+    return DynamicCard("Loading...", null, DynamicCardOrdering.column,
+        DynamicCardAlignment.start, DynamicCardPadding.none());
   }
 
   factory DynamicCard.fromJson(dynamic json) {
@@ -74,64 +90,30 @@ class DynamicCard {
     return DynamicCard(
         json['content'] as String?,
         resolvedCards,
-        Ordering.from(json['ordering']),
+        DynamicCardOrdering.from(json['ordering']),
+        DynamicCardAlignment.from(json['alignment']),
         DynamicCardPadding.fromJson(json['padding']));
   }
 }
 
-class DynamicCardBuilder {
-  String? _content;
-
-  List<DynamicCard>? _cards;
-
-  Ordering? _ordering;
-
-  Padding? _padding;
-
-  DynamicCardBuilder setContent(String content) {
-    _content = content;
-    return this;
-  }
-
-  DynamicCardBuilder setCards(List<DynamicCard> cards) {
-    _cards = cards;
-    return this;
-  }
-
-  DynamicCardBuilder setOrdering(Ordering? ordering) {
-    _ordering = ordering ?? Ordering.column;
-    return this;
-  }
-
-  DynamicCardBuilder setPadding(dynamic padding) {
-    _padding = padding;
-    return this;
-  }
-
-  DynamicCard build() {
-    var finalOrdering = switch (_ordering) {
-      null => Ordering.column,
-      _ => _ordering!,
-    };
-
-    log("logging DynamicCard on build");
-    log(_content);
-    log(_cards);
-    log(finalOrdering);
-    log(_padding);
-    log("\n");
-
-    return DynamicCard(
-        _content, _cards, finalOrdering, DynamicCardPadding.fromJson(_padding));
-  }
-}
-
-enum Ordering {
+enum DynamicCardOrdering {
   row,
   column;
 
-  factory Ordering.from(String? value) {
+  factory DynamicCardOrdering.from(String? value) {
     value ??= "column";
-    return Ordering.values.firstWhere((enumValue) => enumValue.name == value);
+    return DynamicCardOrdering.values
+        .firstWhere((enumValue) => enumValue.name == value);
+  }
+}
+
+enum DynamicCardAlignment {
+  start,
+  center;
+
+  factory DynamicCardAlignment.from(String? value) {
+    value ??= "start";
+    return DynamicCardAlignment.values
+        .firstWhere((enumValue) => enumValue.name == value);
   }
 }
