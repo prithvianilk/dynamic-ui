@@ -8,6 +8,7 @@ class RootCardDao {
     return _supabase
         .from("root_cards")
         .select('root_definition')
+        .eq('id', 'home_farm')
         .single()
         .then((json) => json['root_definition'])
         .then((value) => DynamicCard.fromJson(value));

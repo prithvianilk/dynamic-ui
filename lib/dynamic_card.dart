@@ -2,42 +2,6 @@ import 'package:flutter/cupertino.dart';
 
 import 'logger.dart';
 
-class DynamicCardPadding {
-  final double _top, _bottom, _left, _right;
-
-  DynamicCardPadding(this._top, this._bottom, this._left, this._right);
-
-  Padding build(Widget child) {
-    log("logging card padding");
-    log(child);
-    return Padding(
-      padding: EdgeInsets.only(
-          top: _top, bottom: _bottom, left: _left, right: _right),
-      child: child,
-    );
-  }
-
-  factory DynamicCardPadding.none() {
-    return DynamicCardPadding(0, 0, 0, 0);
-  }
-
-  factory DynamicCardPadding.fromJson(dynamic json) {
-    log("logging dynamic card padding json:");
-    log(json);
-
-    if (json == null) {
-      return DynamicCardPadding.none();
-    }
-
-    return DynamicCardPadding(
-      json['top'] as double? ?? 0,
-      json['bottom'] as double? ?? 0,
-      json['left'] as double? ?? 0,
-      json['right'] as double? ?? 0,
-    );
-  }
-}
-
 class DynamicCard {
   final String? _content;
 
@@ -118,5 +82,41 @@ enum DynamicCardAlignment {
   MainAxisAlignment toMainAxisAlignment() {
     return MainAxisAlignment.values
         .firstWhere((mainAxisAlignment) => mainAxisAlignment.name == name);
+  }
+}
+
+class DynamicCardPadding {
+  final double _top, _bottom, _left, _right;
+
+  DynamicCardPadding(this._top, this._bottom, this._left, this._right);
+
+  Padding build(Widget child) {
+    log("logging card padding");
+    log(child);
+    return Padding(
+      padding: EdgeInsets.only(
+          top: _top, bottom: _bottom, left: _left, right: _right),
+      child: child,
+    );
+  }
+
+  factory DynamicCardPadding.none() {
+    return DynamicCardPadding(0, 0, 0, 0);
+  }
+
+  factory DynamicCardPadding.fromJson(dynamic json) {
+    log("logging dynamic card padding json:");
+    log(json);
+
+    if (json == null) {
+      return DynamicCardPadding.none();
+    }
+
+    return DynamicCardPadding(
+      json['top'] as double? ?? 0,
+      json['bottom'] as double? ?? 0,
+      json['left'] as double? ?? 0,
+      json['right'] as double? ?? 0,
+    );
   }
 }
